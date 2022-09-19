@@ -27,18 +27,18 @@ class ImportError(Exception):
 
 
 class Downloader(object):
-    WGET = '/usr/bin/wget'
+    CURL = '/usr/bin/curl'
 
     @staticmethod
-    def check_wget():
+    def check_CURL():
         try:
-            output = subprocess.check_output([Downloader.WGET, '--version'])
+            output = subprocess.check_output([Downloader.CURL, '--version'])
         except FileNotFoundError:
-            logger.critical('Please install wget.')
-        if output.startswith(b'GNU Wget'):
+            logger.critical('Please install CURL.')
+        if output.startswith(b'curl'):
             logger.info('Found {}.'.format(output.splitlines()[0].strip()))
         else:
-            logger.critical('Please install wget.')
+            logger.critical('Please install CURL.')
 
     @staticmethod
     def sha1(filename):
@@ -58,7 +58,7 @@ class Downloader(object):
             logger.info('File already exists and checksum matches. Skipping.')
             return 
         logger.info('Downloading {} to {}.'.format(url, destination))
-        if subprocess.call([Downloader.WGET, '-c', '-O',destination, url]):
+        if subprocess.call([Downloader.CURL, '-o', destination, url]):
             logger.error('Download failed.')
             raise DownloadError('Download failed')
         if sha1 and Downloader.sha1(destination) != sha1:
